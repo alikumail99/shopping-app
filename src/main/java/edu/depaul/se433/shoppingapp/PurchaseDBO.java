@@ -55,7 +55,7 @@ public class PurchaseDBO {
             p.getShipping()
             );
   }
-  
+
   public List<Purchase> getPurchases() {
     List<Purchase> purchases = jdbi.withHandle(handle -> {
       return handle.createQuery("SELECT * FROM purchases ORDER BY id_num")
