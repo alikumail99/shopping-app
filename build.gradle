@@ -2,6 +2,9 @@ plugins {
     id 'java'
     id "io.freefair.lombok" version "5.1.0"
     id 'org.springframework.boot' version '2.3.3.RELEASE'
+    id "pmd"
+    id "jacoco"
+
 }
 
 repositories {
@@ -29,7 +32,7 @@ version = '0.0.1-SNAPSHOT'
 description = 'shopping-app'
 sourceCompatibility = '11'
 
-def user = 'dwalke30'
+def user = 'mkumail'
 
 bootJar {
     mainClassName = 'edu.depaul.se433.shoppingapp.ShoppingAppApplication'
@@ -37,10 +40,27 @@ bootJar {
 
 def test = tasks.named("test") {
 
+    finalizedBy jacocoTestReport
+    ignoreFailures(true)
     useJUnitPlatform ()
-
     afterTest { desc, result ->
         logger.quiet "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+    }
+
+}
+
+
+jacocoTestReport {
+    dependsOn test
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.3
+            }
+        }
     }
 }
 
@@ -62,6 +82,19 @@ task packageDistribution(type: Zip) {
 
 check {
     finalizedBy packageDistribution
+    dependsOn {
+        jacocoTestCoverageVerification
+    }
 }
 
-
+pmd {
+    consoleOutput = true
+    toolVersion = "6.21.0"
+    rulePriority = 3
+    ignoreFailures = true
+    ruleSets = [
+            "category/java/errorprone.xml",
+            "category/java/bestpractices.xml",
+            "category/java/design.xml"
+    ]
+}

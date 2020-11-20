@@ -71,7 +71,7 @@ public class ShoppingCartApi {
   }
 
   @GetMapping(path = "/average")
-  public double getAvergaPurchase() {
+  public double getAveragePurchase() {
     return purchaseAgent.averagePurchase();
   }
 
